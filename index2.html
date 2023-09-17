@@ -21,6 +21,9 @@
     // Listen for messages
     socket.addEventListener("message", function (event) {
       console.log("Message from server ", event.data);
+      if (event?.data?.text) {
+        event?.data?.text().then((data) => console.log(data));
+      }
     });
 
     const sendMessage = () => {

@@ -12,6 +12,8 @@
   <script>
     // Create WebSocket connection.
     const socket = new WebSocket("ws://localhost:3001");
+    // Change binary type from "blob" to "arraybuffer"
+    // socket.binaryType = "arraybuffer";
 
     // Connection opened
     socket.addEventListener("open", function (event) {
@@ -19,8 +21,23 @@
     });
 
     // Listen for messages
-    socket.addEventListener("message", function (event) {
-      console.log("Message from server ", event.data);
+
+    socket.addEventListener("message", (event) => {
+      if (event.data instanceof ArrayBuffer) {
+        /**
+         * var enc = new TextDecoder("utf-8");
+            console.log(enc.decode(event.data));
+          */
+        // binary frame
+        const view = new DataView(event.data);
+        console.log(view.getInt32(0));
+      } else {
+        // text frame
+        console.log("Message from server ", event.data);
+        if (event?.data?.text) {
+          event?.data?.text().then((data) => console.log(data));
+        }
+      }
     });
 
     const sendMessage = () => {
